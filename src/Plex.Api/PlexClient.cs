@@ -16,14 +16,14 @@ namespace Plex.Api
 {
     public class PlexClient : IPlexClient
     {
-        private readonly IApiService _apiService;
-        private readonly ClientOptions _clientOptions;
-        private readonly string _baseUri = "https://plex.tv/api/v2/";
+        protected readonly IApiService ApiService;
+        protected readonly ClientOptions ClientOptions;
+        protected readonly string BaseUri = "https://plex.tv/api/v2/";
 
         public PlexClient(ClientOptions clientOptions, IApiService apiService)
         {
-            _apiService = apiService;
-            _clientOptions = clientOptions;
+            ApiService = apiService;
+            ClientOptions = clientOptions;
         }
 
         /// <summary>
@@ -33,16 +33,16 @@ namespace Plex.Api
         public async Task<OAuthPin> CreateOAuthPin(string redirectUrl)
         {
             var apiRequest =
-                new ApiRequestBuilder(_baseUri, "pins", HttpMethod.Post)
+                new ApiRequestBuilder(BaseUri, "pins", HttpMethod.Post)
                     .AcceptJson()
                     .AddQueryParam("strong", "true")
                     .AddRequestHeaders(GetClientIdentifierHeader())
                     .AddRequestHeaders(GetClientMetaHeaders())
                     .Build();
 
-            var oAuthPin = await _apiService.InvokeApiAsync<OAuthPin>(apiRequest);
+            var oAuthPin = await ApiService.InvokeApiAsync<OAuthPin>(apiRequest);
             oAuthPin.Url =
-                $"https://app.plex.tv/auth#?context[device][product]={_clientOptions.Product}&context[device][environment]=bundled&context[device][layout]=desktop&context[device][platform]={_clientOptions.Platform}&context[device][device]={_clientOptions.DeviceName}&clientID={_clientOptions.ClientId}&forwardUrl={redirectUrl}&code={oAuthPin.Code}";
+                $"https://app.plex.tv/auth#?context[device][product]={ClientOptions.Product}&context[device][environment]=bundled&context[device][layout]=desktop&context[device][platform]={ClientOptions.Platform}&context[device][device]={ClientOptions.DeviceName}&clientID={ClientOptions.ClientId}&forwardUrl={redirectUrl}&code={oAuthPin.Code}";
 
             return oAuthPin;
         }
@@ -55,12 +55,12 @@ namespace Plex.Api
         public async Task<OAuthPin> GetAuthTokenFromOAuthPin(string pinId)
         {
             var apiRequest =
-                new ApiRequestBuilder(_baseUri, $"pins/{pinId}", HttpMethod.Get)
+                new ApiRequestBuilder(BaseUri, $"pins/{pinId}", HttpMethod.Get)
                     .AcceptJson()
                     .AddRequestHeaders(GetClientIdentifierHeader())
                     .Build();
 
-            var oauthPin = await _apiService.InvokeApiAsync<OAuthPin>(apiRequest);
+            var oauthPin = await ApiService.InvokeApiAsync<OAuthPin>(apiRequest);
 
             return oauthPin;
         }
@@ -90,7 +90,7 @@ namespace Plex.Api
                     .AddJsonBody(userRequest)
                     .Build();
 
-            PlexAccount account = await _apiService.InvokeApiAsync<PlexAccount>(apiRequest);
+            PlexAccount account = await ApiService.InvokeApiAsync<PlexAccount>(apiRequest);
 
             return account?.User;
         }
@@ -107,7 +107,7 @@ namespace Plex.Api
                 .AddRequestHeaders(GetClientIdentifierHeader())
                 .Build();
 
-            var account = await _apiService.InvokeApiAsync<PlexAccount>(apiRequest);
+            var account = await ApiService.InvokeApiAsync<PlexAccount>(apiRequest);
 
             return account?.User;
         }
@@ -125,7 +125,7 @@ namespace Plex.Api
                 .AddRequestHeaders(GetClientIdentifierHeader())
                 .Build();
 
-            ServerContainer serverContainer = await _apiService.InvokeApiAsync<ServerContainer>(apiRequest);
+            ServerContainer serverContainer = await ApiService.InvokeApiAsync<ServerContainer>(apiRequest);
 
             return serverContainer?.Servers;
         }
@@ -137,7 +137,7 @@ namespace Plex.Api
                 .AddRequestHeaders(GetClientIdentifierHeader())
                 .Build();
 
-            ResourceContainer resourceContainer = await _apiService.InvokeApiAsync<ResourceContainer>(apiRequest);
+            ResourceContainer resourceContainer = await ApiService.InvokeApiAsync<ResourceContainer>(apiRequest);
 
             return resourceContainer?.Devices;
         }
@@ -154,7 +154,7 @@ namespace Plex.Api
                 .AddRequestHeaders(GetClientIdentifierHeader())
                 .Build();
 
-            FriendContainer friendContainer = await _apiService.InvokeApiAsync<FriendContainer>(apiRequest);
+            FriendContainer friendContainer = await ApiService.InvokeApiAsync<FriendContainer>(apiRequest);
 
             return friendContainer?.Friends.ToList();
         }
@@ -173,7 +173,7 @@ namespace Plex.Api
                 .AcceptJson()
                 .Build();
 
-            var plexMediaContainer = await _apiService.InvokeApiAsync<PlexMediaContainer>(apiRequest);
+            var plexMediaContainer = await ApiService.InvokeApiAsync<PlexMediaContainer>(apiRequest);
 
             return plexMediaContainer;
         }
@@ -193,7 +193,7 @@ namespace Plex.Api
                 .AcceptJson()
                 .Build();
 
-            var plexMediaContainer = await _apiService.InvokeApiAsync<PlexMediaContainer>(apiRequest);
+            var plexMediaContainer = await ApiService.InvokeApiAsync<PlexMediaContainer>(apiRequest);
 
             return plexMediaContainer;
         }
@@ -211,7 +211,7 @@ namespace Plex.Api
                     .AcceptJson()
                     .Build();
 
-            var plexMediaContainer = await _apiService.InvokeApiAsync<PlexMediaContainer>(apiRequest);
+            var plexMediaContainer = await ApiService.InvokeApiAsync<PlexMediaContainer>(apiRequest);
 
             return plexMediaContainer;
         }
@@ -233,7 +233,7 @@ namespace Plex.Api
                     .AcceptJson()
                     .Build();
 
-            var plexMediaContainer = await _apiService.InvokeApiAsync<PlexMediaContainer>(apiRequest);
+            var plexMediaContainer = await ApiService.InvokeApiAsync<PlexMediaContainer>(apiRequest);
 
             return plexMediaContainer;
         }
@@ -253,7 +253,7 @@ namespace Plex.Api
                 .AcceptJson()
                 .Build();
 
-            var plexMediaContainer = await _apiService.InvokeApiAsync<PlexMediaContainer>(apiRequest);
+            var plexMediaContainer = await ApiService.InvokeApiAsync<PlexMediaContainer>(apiRequest);
 
             return plexMediaContainer;
         }
@@ -275,7 +275,7 @@ namespace Plex.Api
                     .AcceptJson()
                     .Build();
 
-            var plexMediaContainer = await _apiService.InvokeApiAsync<PlexMediaContainer>(apiRequest);
+            var plexMediaContainer = await ApiService.InvokeApiAsync<PlexMediaContainer>(apiRequest);
 
             return plexMediaContainer;
         }
@@ -294,7 +294,7 @@ namespace Plex.Api
                 .AcceptJson()
                 .Build();
 
-            var plexMediaContainer = await _apiService.InvokeApiAsync<PlexMediaContainer>(apiRequest);
+            var plexMediaContainer = await ApiService.InvokeApiAsync<PlexMediaContainer>(apiRequest);
 
             return plexMediaContainer;
         }
@@ -314,7 +314,7 @@ namespace Plex.Api
                 .AcceptJson()
                 .Build();
 
-            var sessionWrapper = await _apiService.InvokeApiAsync<SessionWrapper>(apiRequest);
+            var sessionWrapper = await ApiService.InvokeApiAsync<SessionWrapper>(apiRequest);
 
             return sessionWrapper.SessionContainer.Sessions?.ToList();
         }
@@ -341,7 +341,7 @@ namespace Plex.Api
                 .AcceptJson()
                 .Build();
 
-            await _apiService.InvokeApiAsync(apiRequest);
+            await ApiService.InvokeApiAsync(apiRequest);
         }
 
         /// <summary>
@@ -360,7 +360,7 @@ namespace Plex.Api
                 .AcceptJson()
                 .Build();
 
-            await _apiService.InvokeApiAsync(apiRequest);
+            await ApiService.InvokeApiAsync(apiRequest);
         }
 
         /// <summary>
@@ -381,7 +381,7 @@ namespace Plex.Api
                 .AcceptJson()
                 .Build();
 
-            var container = await _apiService.InvokeApiAsync<PlexMediaContainer>(apiRequest);
+            var container = await ApiService.InvokeApiAsync<PlexMediaContainer>(apiRequest);
 
             var collections =
                 ObjectMapper.Mapper.Map<List<Metadata>, List<CollectionModel>>(container.MediaContainer.Metadata);
@@ -405,7 +405,7 @@ namespace Plex.Api
                     .AcceptJson()
                     .Build();
 
-            await _apiService.InvokeApiAsync(apiRequest);
+            await ApiService.InvokeApiAsync(apiRequest);
         }
 
         /// <summary>
@@ -435,7 +435,7 @@ namespace Plex.Api
                     })
                     .Build();
 
-            await _apiService.InvokeApiAsync(apiRequest);
+            await ApiService.InvokeApiAsync(apiRequest);
         }
 
         /// <summary>
@@ -453,7 +453,7 @@ namespace Plex.Api
                 .AcceptJson()
                 .Build();
 
-            var container = await _apiService.InvokeApiAsync<PlexMediaContainer>(apiRequest);
+            var container = await ApiService.InvokeApiAsync<PlexMediaContainer>(apiRequest);
 
             var collection =
                 ObjectMapper.Mapper.Map<Metadata, CollectionModel>(container.MediaContainer.Metadata.FirstOrDefault());
@@ -504,7 +504,7 @@ namespace Plex.Api
                 .AcceptJson()
                 .Build();
 
-            var container = await _apiService.InvokeApiAsync<PlexMediaContainer>(apiRequest);
+            var container = await ApiService.InvokeApiAsync<PlexMediaContainer>(apiRequest);
 
             var items = container.MediaContainer.Metadata;
 
@@ -539,7 +539,7 @@ namespace Plex.Api
                     })
                     .Build();
 
-            await _apiService.InvokeApiAsync(apiRequest);
+            await ApiService.InvokeApiAsync(apiRequest);
         }
 
         /// <summary>
@@ -570,10 +570,10 @@ namespace Plex.Api
                     })
                     .Build();
 
-            await _apiService.InvokeApiAsync(apiRequest);
+            await ApiService.InvokeApiAsync(apiRequest);
         }
 
-        private Dictionary<string, string> GetClientLimitHeaders(int from, int to)
+        protected Dictionary<string, string> GetClientLimitHeaders(int from, int to)
         {
             var plexHeaders = new Dictionary<string, string>
             {
@@ -584,24 +584,24 @@ namespace Plex.Api
             return plexHeaders;
         }
 
-        private Dictionary<string, string> GetClientIdentifierHeader()
+        protected Dictionary<string, string> GetClientIdentifierHeader()
         {
             var plexHeaders = new Dictionary<string, string>
             {
-                ["X-Plex-Client-Identifier"] = _clientOptions.ClientId
+                ["X-Plex-Client-Identifier"] = ClientOptions.ClientId
             };
 
             return plexHeaders;
         }
 
-        private Dictionary<string, string> GetClientMetaHeaders()
+        protected Dictionary<string, string> GetClientMetaHeaders()
         {
             var plexHeaders = new Dictionary<string, string>
             {
-                ["X-Plex-Product"] = _clientOptions.Product,
-                ["X-Plex-Version"] = _clientOptions.Version,
-                ["X-Plex-Device"] = _clientOptions.DeviceName,
-                ["X-Plex-Platform"] = _clientOptions.Platform
+                ["X-Plex-Product"] = ClientOptions.Product,
+                ["X-Plex-Version"] = ClientOptions.Version,
+                ["X-Plex-Device"] = ClientOptions.DeviceName,
+                ["X-Plex-Platform"] = ClientOptions.Platform
             };
 
             return plexHeaders;
