@@ -6,9 +6,10 @@ namespace Plex.Api.Automapper
 {
     public class CollectionModelMapper : Profile
     {
-            public CollectionModelMapper()
-            {
-                CreateMap<Metadata, CollectionModel>();
-            }
+        public CollectionModelMapper()
+        {
+            CreateMap<Metadata, CollectionModel>();
+            CreateMap<Directory, SimpleCollection>();
+        }
     }
 }

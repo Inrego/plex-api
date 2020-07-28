@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Plex.Api.Api;
 using Plex.Api.Automapper;
+using Plex.Api.Enums;
 using Plex.Api.Models;
 using Plex.Api.Models.Friends;
 using Plex.Api.Models.OAuth;
@@ -201,11 +202,15 @@ namespace Plex.Api
         /// <param name="authToken">Authentication Token</param>
         /// <param name="plexServerHost">Plex Host Uri</param>
         /// <param name="libraryKey">Library Key</param>
+        /// <param name="type">Group metadata by</param>
+        /// <param name="includeCollections">Include metadata in returned dataset</param>
         public async Task<PlexMediaContainer> GetMetadataForLibrary(string authToken, string plexServerHost,
-            string libraryKey)
+            string libraryKey, MetadataGroupingType? type, bool includeCollections)
         {
+            var grouping = type.HasValue ? "&type=" + (int)type.Value : "";
+            var collections = includeCollections ? 1 : 0;
             var apiRequest =
-                new ApiRequestBuilder(plexServerHost, $"library/sections/{libraryKey}/all", HttpMethod.Get)
+                new ApiRequestBuilder(plexServerHost, $"library/sections/{libraryKey}/all?includeCollections={collections}{grouping}", HttpMethod.Get)
                     .AddPlexToken(authToken)
                     .AddRequestHeaders(GetClientIdentifierHeader())
                     .AcceptJson()
@@ -243,11 +248,11 @@ namespace Plex.Api
         /// </summary>
         /// <param name="authToken">Authentication Token</param>
         /// <param name="plexServerHost">Plex Host Uri</param>
-        /// <param name="metadataId">Metadata Unique Identifier</param>
+        /// <param name="ratingKey">Metadata Unique Identifier</param>
         /// <returns></returns>
-        public async Task<PlexMediaContainer> GetMetadata(string authToken, string plexServerHost, int metadataId)
+        public async Task<PlexMediaContainer> GetMetadata(string authToken, string plexServerHost, string ratingKey)
         {
-            var apiRequest = new ApiRequestBuilder(plexServerHost, $"library/metadata/{metadataId}", HttpMethod.Get)
+            var apiRequest = new ApiRequestBuilder(plexServerHost, $"library/metadata/{ratingKey}", HttpMethod.Get)
                 .AddPlexToken(authToken)
                 .AddRequestHeaders(GetClientIdentifierHeader())
                 .AcceptJson()
@@ -263,13 +268,13 @@ namespace Plex.Api
         /// </summary>
         /// <param name="authToken">Authentication Token</param>
         /// <param name="plexServerHost">Plex Host Uri</param>
-        /// <param name="metadataId">Metadata Unique Identifier</param>
+        /// <param name="ratingKey">Metadata Unique Identifier</param>
         /// <returns></returns>
         public async Task<PlexMediaContainer> GetChildrenMetadata(string authToken, string plexServerHost,
-            int metadataId)
+            string ratingKey)
         {
             var apiRequest =
-                new ApiRequestBuilder(plexServerHost, $"library/metadata/{metadataId}/children", HttpMethod.Get)
+                new ApiRequestBuilder(plexServerHost, $"library/metadata/{ratingKey}/children", HttpMethod.Get)
                     .AddPlexToken(authToken)
                     .AddRequestHeaders(GetClientIdentifierHeader())
                     .AcceptJson()
@@ -390,6 +395,30 @@ namespace Plex.Api
         }
 
         /// <summary>
+        /// Get a simple list of all Collections for a Given Library. Audio libraries have limited collection support, so this is generally only used for audio libraries.
+        /// </summary>
+        /// <param name="authToken">Authentication Token</param>
+        /// <param name="plexServerHost">Full Uri of Plex Media Server Instance</param>
+        /// <param name="libraryKey">Library Key</param>
+        /// <returns></returns>
+        public async Task<List<SimpleCollection>> GetCollectionsSimple(string authToken, string plexServerHost,
+            string libraryKey)
+        {
+            var apiRequest = new ApiRequestBuilder(plexServerHost,
+                    $"library/sections/{libraryKey}/collection", HttpMethod.Get)
+                .AddPlexToken(authToken)
+                .AddRequestHeaders(GetClientIdentifierHeader())
+                .AcceptJson()
+                .Build();
+
+            var container = await ApiService.InvokeApiAsync<PlexMediaContainer>(apiRequest);
+            var collections =
+                ObjectMapper.Mapper.Map<List<Models.Directory>, List<SimpleCollection>>(container.MediaContainer.Directory);
+
+            return collections;
+        }
+
+        /// <summary>
         /// Delete Collection from Plex
         /// </summary>
         /// <param name="authToken">Authentication Token</param>
@@ -471,7 +500,7 @@ namespace Plex.Api
         public async Task<List<string>> GetCollectionTagsForMovie(string authToken, string plexServerHost,
             string movieKey)
         {
-            var movieContainer = await GetMetadata(authToken, plexServerHost, int.Parse(movieKey));
+            var movieContainer = await GetMetadata(authToken, plexServerHost, movieKey);
             var movie = movieContainer.MediaContainer.Metadata.FirstOrDefault();
 
             if (movie != null && movie.Collection.Any())

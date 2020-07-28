@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Plex.Api.Enums;
 using Plex.Api.Models;
 using Plex.Api.Models.Friends;
 using Plex.Api.Models.OAuth;
@@ -20,10 +21,11 @@ namespace Plex.Api
         Task<List<Friend>> GetFriends(string authToken);
         Task<PlexMediaContainer> GetLibraries(string authToken, string plexServerHost);
         Task<PlexMediaContainer> GetLibrary(string authToken, string plexServerHost, string libraryKey);
-        Task<PlexMediaContainer> GetMetadataForLibrary(string authToken, string plexServerHost, string libraryKey);
+        Task<PlexMediaContainer> GetMetadataForLibrary(string authToken, string plexServerHost, string libraryKey, MetadataGroupingType? type, bool includeCollections);
+        Task<List<SimpleCollection>> GetCollectionsSimple(string authToken, string plexServerHost, string libraryKey);
         Task<PlexMediaContainer> GetRecentlyAdded(string authToken, string plexServerHost, string libraryKey);
-        Task<PlexMediaContainer> GetMetadata(string authToken, string plexServerHost, int metadataId);
-        Task<PlexMediaContainer> GetChildrenMetadata(string authToken, string plexServerHost, int metadataId);
+        Task<PlexMediaContainer> GetMetadata(string authToken, string plexServerHost, string ratingKey);
+        Task<PlexMediaContainer> GetChildrenMetadata(string authToken, string plexServerHost, string ratingKey);
         Task<PlexMediaContainer> GetPlexInfo(string authToken, string plexServerHost);
         Task<List<Session>> GetSessions(string authToken, string plexServerHost);
         Task<Session> GetSessionByPlayerId(string authToken, string plexServerHost, string playerKey);
