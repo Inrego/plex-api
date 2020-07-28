@@ -24,7 +24,9 @@ namespace Plex.Api.Models
 
         [JsonPropertyName("key")]
         public string Key { get; set; }
-        
+        [JsonPropertyName("fastKey")]
+        public string FastKey { get; set; }
+
         [JsonPropertyName("type")] 
         public string Type { get; set; }
         

@@ -52,6 +52,7 @@ namespace Plex.Api.Models
         [JsonPropertyName("Media")] public List<Medium> Media { get; set; }
 
         [JsonPropertyName("Genre")] public Genre[] Genres { get; set; }
+        [JsonPropertyName("Style")] public Style[] Styles { get; set; }
 
         [JsonPropertyName("Director")] public Director[] Directors { get; set; }
 
