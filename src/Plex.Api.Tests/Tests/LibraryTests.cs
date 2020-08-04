@@ -54,7 +54,7 @@ namespace Plex.Api.Tests.Tests
 
             string fullUri = servers[0].FullUri.ToString();
 
-            var items = plexApi.GetMetadataForLibrary(authKey, fullUri, "1").Result;
+            var items = plexApi.GetMetadataForLibrary(authKey, fullUri, "1", null, true).Result;
 
             Assert.IsTrue(items.MediaContainer.Metadata.Any());
         }
@@ -69,7 +69,7 @@ namespace Plex.Api.Tests.Tests
             List<Server> servers = plexApi.GetServers(authKey).Result;
             string fullUri = servers[0].FullUri.ToString();
             plexApi.UnScrobbleItem(authKey, fullUri, ratingKey);
-            PlexMediaContainer after = plexApi.GetMetadata(authKey, fullUri, int.Parse(ratingKey)).Result;
+            PlexMediaContainer after = plexApi.GetMetadata(authKey, fullUri, ratingKey).Result;
 
             Assert.AreEqual(after.MediaContainer.Metadata[0].ViewCount, 0);
         }
@@ -83,9 +83,9 @@ namespace Plex.Api.Tests.Tests
             var authKey = Configuration.GetValue<string>("Plex:AuthenticationKey");
             List<Server> servers = plexApi.GetServers(authKey).Result;
             string fullUri = servers[0].FullUri.ToString();
-            PlexMediaContainer before = plexApi.GetMetadata(authKey, fullUri, int.Parse(ratingKey)).Result;
+            PlexMediaContainer before = plexApi.GetMetadata(authKey, fullUri, ratingKey).Result;
             plexApi.ScrobbleItem(authKey, fullUri, ratingKey);
-            PlexMediaContainer after = plexApi.GetMetadata(authKey, fullUri, int.Parse(ratingKey)).Result;
+            PlexMediaContainer after = plexApi.GetMetadata(authKey, fullUri, ratingKey).Result;
 
             Assert.AreEqual(after.MediaContainer.Metadata[0].ViewCount, before.MediaContainer.Metadata[0].ViewCount + 1);
             
@@ -121,7 +121,7 @@ namespace Plex.Api.Tests.Tests
         {
             var plexApi = ServiceProvider.GetService<IPlexClient>();
 
-            const int metadataId = 8576;
+            const string metadataId = "8576";
             
             var authKey = Configuration.GetValue<string>("Plex:AuthenticationKey");
 

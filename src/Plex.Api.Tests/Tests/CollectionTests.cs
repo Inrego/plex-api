@@ -99,7 +99,7 @@ namespace Plex.Api.Tests.Tests
             List<Server> servers = plexApi.GetServers(authKey).Result;
             string fullUri = servers[0].FullUri.ToString();
 
-            var movies = plexApi.GetChildrenMetadata(authKey, fullUri, 112898).Result;
+            var movies = plexApi.GetChildrenMetadata(authKey, fullUri, "112898").Result;
 
             Assert.IsTrue(movies.MediaContainer.Metadata.Count > 0);
         }
