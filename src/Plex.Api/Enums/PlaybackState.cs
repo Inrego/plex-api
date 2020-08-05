@@ -8,6 +8,8 @@ namespace Plex.Api.Enums
     {
         Playing,
         Paused,
-        Stopped
+        Stopped,
+        Buffering,
+        Error
     }
 }
