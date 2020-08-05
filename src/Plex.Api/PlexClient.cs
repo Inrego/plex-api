@@ -602,7 +602,7 @@ namespace Plex.Api
             await ApiService.InvokeApiAsync(apiRequest);
         }
 
-        public async Task ReportPlayback(string authToken, string plexServerHost, string ratingKey, TimeSpan playbackTime, TimeSpan time, PlaybackState state, string sessionId)
+        public async Task ReportPlayback(string authToken, string plexServerHost, string ratingKey, TimeSpan time, PlaybackState state, string sessionId)
         {
             var apiRequest = 
                 new ApiRequestBuilder(plexServerHost, ":/timeline", HttpMethod.Put)
@@ -613,7 +613,6 @@ namespace Plex.Api
                     .AddQueryParams(new Dictionary<string, string>()
                     {
                         {"ratingKey", ratingKey},
-                        {"playbackTime", playbackTime.TotalMilliseconds.ToString()},
                         {"state", state.ToString().ToLower()},
                         {"time", time.TotalMilliseconds.ToString()},
                         {"X-Plex-Session-Identifier", sessionId},

@@ -44,6 +44,6 @@ namespace Plex.Api
             CollectionModel collectionModel);
         Task<List<Metadata>> GetCollectionMovies(string authToken, string plexServerHost, string collectionKey);
 
-        Task ReportPlayback(string authToken, string plexServerHost, string ratingKey, TimeSpan playbackTime, TimeSpan time, PlaybackState state, string sessionId);
+        Task ReportPlayback(string authToken, string plexServerHost, string ratingKey, TimeSpan time, PlaybackState state, string sessionId);
     }
 }
